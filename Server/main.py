@@ -4,17 +4,22 @@ from models import Contact
 
 @app.route("/contacts",methods = ["GET"])
 def get_contacts():
+    
     contacts = Contact.query.all()
-    json_contacts = list(map(lambda x : x.to_json(),contacts)) 
+    json_contacts = list(map(lambda x : x.to_json(),contacts))
+     
     return jsonify({"contacts" : json_contacts})
     
 @app.route("/create_contact", methods = ["POST"])
 def create_contact():
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
+    
     email = request.json.get("email")
+    
     if not first_name or not last_name or not email:
         return (jsonify({"message" : "Include all details"}),400)
+    
     new_contact = Contact(first_name = first_name,last_name = last_name,email = email)
     try:
         db.session.add(new_contact)
@@ -22,7 +27,6 @@ def create_contact():
     except Exception as e:
         return({"message" : str(e)},400)    
     return ({"message" : "user Created!!"},201)
-    
     
 @app.route("/update/<int:user_id>",methods = ["PATCH"])
 def update_details(user_id):
